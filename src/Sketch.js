@@ -2,6 +2,48 @@ import React, { Component } from 'react'
 import * as THREE from 'three'
 import * as GLOBAL from './Global'
 
+function cartesianCurve() {
+    var points = []
+    const TWO_PI = 2 * Math.PI
+
+    for (var t = 0; t <= TWO_PI; t += 0.01) {
+        var x = 0.25 * Math.cos(3 * t)
+        var y = 0.25 * Math.sin(5 * t)
+        points.push(new THREE.Vector2(x, y, 0))
+    }
+    return points
+}
+
+function parametricCurve() {
+    var points = []
+    const TWO_PI = 2 * Math.PI
+    for (var t = 0; t <= TWO_PI; t += 0.01) {
+
+        var r = (0.05) + (0.15) * Math.cos(3 * t)
+        var phi = (Math.PI / 4) - Math.sin(t)
+
+        var x = r * Math.cos(phi)
+        var y = r * Math.sin(phi)
+
+        points.push(new THREE.Vector2(x, y, 0))
+    }
+    return points
+}
+
+function local_variable_curve() {
+
+    var points = []
+    const TWO_PI = 2 * Math.PI
+    for (var u = 0; u <= 5* TWO_PI; u += 0.01) {
+
+        var x = 0.5 + (u/50)*Math.cos(u)
+        var y = 0.1 + (u/50)*Math.sin(u)
+
+        points.push(new THREE.Vector2(x, y, 0))
+    }
+    return points
+
+}
 class Sketch extends Component {
     constructor(props) {
         super(props)
@@ -19,7 +61,7 @@ class Sketch extends Component {
 
         // Create a Blank scene
         this.scene = new THREE.Scene()
-        
+
         // Get Ortho cam
         this.camera = GLOBAL.Camera.getOrthographicCamera(this.width, this.height)
         this.camera.updateProjectionMatrix()
@@ -65,9 +107,18 @@ class Sketch extends Component {
 
     setup() {
         // Draw here..
-        this.cube = new THREE.Mesh(GLOBAL.Geometry.Cube, GLOBAL.Material.Basic)
+        var pc_geo = new THREE.BufferGeometry().setFromPoints(parametricCurve())
+        var pc = new THREE.Line(pc_geo, GLOBAL.Material.BlueLine)
 
-        this.scene.add(this.cube)
+        var cc_geo = new THREE.BufferGeometry().setFromPoints(cartesianCurve())
+        var cc = new THREE.Line(cc_geo, GLOBAL.Material.RedLine)
+
+        var lv_geo = new THREE.BufferGeometry().setFromPoints(local_variable_curve())
+        var lv = new THREE.Line(lv_geo, GLOBAL.Material.GreenLine)
+
+        this.scene.add(pc)
+        this.scene.add(cc)
+        this.scene.add(lv)
     }
 
     animate() {
